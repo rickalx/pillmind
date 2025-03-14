@@ -1,0 +1,21 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Django-specific files
+db.sqlite3
+*.log
+*.pot
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+
+# Virtual environments
+.venv/
+env/
