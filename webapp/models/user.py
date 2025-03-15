@@ -34,7 +34,6 @@ class CustomUser(AbstractUser):
     )
     birth_date = models.DateField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
-    is_verified = models.BooleanField(default=False)
 
     # Campos de auditoría
     created_at = models.DateTimeField(auto_now_add=True)
@@ -78,13 +77,6 @@ class CustomUser(AbstractUser):
             raise ValueError('Superusuario debe tener is_superuser=True')
         
         return cls.create_user(username, email, password, **extra_fields)
-
-    def verify_email(self):
-        """
-        Método para verificar el correo electrónico
-        """
-        self.is_verified = True
-        self.save()
 
     def deactivate_account(self):
         """

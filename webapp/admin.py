@@ -12,13 +12,13 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ['username', 'email', 'is_staff', 'is_verified']
+    list_display = ['username', 'email', 'is_staff']
     inlines = (PerfilProfesionalInline,)
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Información Personal', {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'gender')}),
-        ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_verified', 'groups', 'user_permissions')}),
+        ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
     )
     
@@ -31,7 +31,7 @@ class CustomUserAdmin(UserAdmin):
             'fields': ('first_name', 'last_name', 'phone_number', 'birth_date', 'gender'),
         }),
         ('Permisos', {
-            'fields': ('is_staff', 'is_superuser', 'is_verified'),
+            'fields': ('is_staff', 'is_superuser'),
         }),
     )
 

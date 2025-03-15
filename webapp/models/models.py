@@ -49,7 +49,7 @@ class PerfilProfesional(models.Model):
     # Información profesional
     titulo_profesional = models.CharField(max_length=100, blank=True)
     institucion = models.CharField(max_length=100, blank=True)
-    anos_experiencia = models.IntegerField(default=0)
+    años_experiencia = models.IntegerField(default=0)
     
     # Roles específicos
     roles = models.ManyToManyField(

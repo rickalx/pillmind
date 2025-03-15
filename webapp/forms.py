@@ -1,5 +1,4 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import AdminUserCreationForm, UserChangeForm
@@ -51,7 +50,6 @@ class CustomUserCreationForm(AdminUserCreationForm):
             'gender', 
             'is_staff', 
             'is_superuser', 
-            'is_verified'
         )
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
@@ -83,8 +81,8 @@ class CustomUserCreationForm(AdminUserCreationForm):
                 (today.month, today.day) < (birth_date.month, birth_date.day)
             )
             
-            if age < 13:
-                raise ValidationError(_("Debes tener al menos 13 años para registrarte."))
+            if age < 18:
+                raise ValidationError(_("Debes tener al menos 18 años para registrarte."))
         
         return birth_date
 
@@ -114,7 +112,6 @@ class CustomUserChangeForm(UserChangeForm):
             'gender', 
             'is_staff', 
             'is_superuser', 
-            'is_verified'
         )
 
 
