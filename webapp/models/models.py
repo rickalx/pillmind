@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 
-from .user import CustomUser  
+#from .user import CustomUser  
 
 class Especialidad(models.Model):
     nombre = models.CharField(max_length=100)

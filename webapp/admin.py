@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from .models import CustomUser, PerfilProfesional, Especialidad, NivelAcceso, Rol
-from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .forms.custom_user_forms import CustomUserCreationForm, CustomUserChangeForm
+from .models.analisis_propuesta import AnalisisPropuesta
 
 class PerfilProfesionalInline(admin.StackedInline):
     model = PerfilProfesional
@@ -50,3 +51,19 @@ admin.site.register(Especialidad)
 admin.site.register(NivelAcceso)
 admin.site.register(Rol)
 admin.site.register(PerfilProfesional)
+
+@admin.register(AnalisisPropuesta)
+class AnalisisPropuestaAdmin(admin.ModelAdmin):
+    list_display = (
+        'usuario', 
+        'fecha_analisis', 
+        'estado', 
+        'get_resumen'
+    )
+    list_filter = ('estado', 'fecha_analisis')
+    search_fields = ('contenido', 'usuario__username')
+    readonly_fields = ('fecha_analisis', 'fecha_ultima_modificacion')
+
+    def get_resumen(self, obj):
+        return obj.get_resumen()
+    get_resumen.short_description = 'Resumen'

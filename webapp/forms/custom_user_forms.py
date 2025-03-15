@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import AdminUserCreationForm, UserChangeForm
 
 # Importación del modelo CustomUser
-from .models.user import CustomUser
+from ..models.user import CustomUser
 
 class CustomUserCreationForm(AdminUserCreationForm):
     email = forms.EmailField(

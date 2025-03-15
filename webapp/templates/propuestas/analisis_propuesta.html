@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if form.instance.id %}{% trans "Editar Análisis de Propuesta" %}{% else %}{% trans "Nuevo Análisis de Propuesta" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        {% if form.instance.id %}
+                            {% trans "Editar Análisis de Propuesta" %}
+                        {% else %}
+                            {% trans "Nuevo Análisis de Propuesta" %}
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{% trans "Por favor corrija los siguientes errores:" %}</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="form">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.url_propuesta.id_for_label }}">{% trans "URL de la Propuesta" %}:</label>
+                            {{ form.url_propuesta }}
+                            {% if form.url_propuesta.help_text %}
+                                <small class="form-text text-muted">{{ form.url_propuesta.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.contenido.id_for_label }}">{% trans "Contenido del Análisis" %}:</label>
+                            {{ form.contenido }}
+                            {% if form.contenido.help_text %}
+                                <small class="form-text text-muted">{{ form.contenido.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.prompts_utilizados.id_for_label }}">{% trans "Prompts Utilizados" %}:</label>
+                            {{ form.prompts_utilizados }}
+                            {% if form.prompts_utilizados.help_text %}
+                                <small class="form-text text-muted">{{ form.prompts_utilizados.help_text }}</small>
+                            {% endif %}
+                            <small class="form-text text-muted">{% trans "Ingrese los prompts en formato JSON, por ejemplo: {\"prompt1\": \"texto\", \"prompt2\": \"texto\"}" %}</small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.estado.id_for_label }}">{% trans "Estado" %}:</label>
+                            {{ form.estado }}
+                            {% if form.estado.help_text %}
+                                <small class="form-text text-muted">{{ form.estado.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.palabras_clave.id_for_label }}">{% trans "Palabras Clave" %}:</label>
+                            {{ form.palabras_clave }}
+                            {% if form.palabras_clave.help_text %}
+                                <small class="form-text text-muted">{{ form.palabras_clave.help_text }}</small>
+                            {% endif %}
+                            <small class="form-text text-muted">{% trans "Separe las palabras clave con comas" %}</small>
+                        </div>
+                        
+                        {% if form.instance.id %}
+                        <div class="form-group mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">{% trans "Información del Creador" %}</h5>
+                                    <p class="card-text">
+                                        <strong>{% trans "Creado por" %}:</strong> 
+                                        {% if form.instance.usuario %}
+                                            {{ form.instance.usuario.username }}
+                                        {% else %}
+                                            {{ form.instance.nombre_usuario|default:"Usuario eliminado" }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>{% trans "Email" %}:</strong> 
+                                        {% if form.instance.usuario %}
+                                            {{ form.instance.usuario.email }}
+                                        {% else %}
+                                            {{ form.instance.email_usuario|default:"No disponible" }}
+                                        {% endif %}
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>{% trans "Fecha de creación" %}:</strong> 
+                                        {{ form.instance.fecha_analisis|date:"d/m/Y H:i" }}
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>{% trans "Última modificación" %}:</strong> 
+                                        {{ form.instance.fecha_ultima_modificacion|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% if form.instance.id %}
+                                    {% trans "Actualizar Análisis" %}
+                                {% else %}
+                                    {% trans "Crear Análisis" %}
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'analisis_propuesta_list' %}" class="btn btn-secondary">{% trans "Cancelar" %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validación adicional para el campo de prompts JSON
+    document.addEventListener('DOMContentLoaded', function() {
+        const promptsField = document.getElementById('{{ form.prompts_utilizados.id_for_label }}');
+        
+        if (promptsField) {
+            promptsField.addEventListener('blur', function() {
+                try {
+                    if (this.value.trim() !== '') {
+                        JSON.parse(this.value);
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                } catch (e) {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                    
+                    // Crear mensaje de error si no existe
+                    let errorDiv = this.nextElementSibling;
+                    if (!errorDiv || !errorDiv.classList.contains('invalid-feedback')) {
+                        errorDiv = document.createElement('div');
+                        errorDiv.classList.add('invalid-feedback');
+                        this.parentNode.insertBefore(errorDiv, this.nextSibling);
+                    }
+                    errorDiv.textContent = "{% trans 'El formato JSON no es válido' %}";
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}
