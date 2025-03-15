@@ -44,9 +44,14 @@ class CustomUserCreationForm(AdminUserCreationForm):
             'email', 
             'password1', 
             'password2', 
+            'first_name', 
+            'last_name', 
             'phone_number', 
             'birth_date', 
-            'gender'
+            'gender', 
+            'is_staff', 
+            'is_superuser', 
+            'is_verified'
         )
         widgets = {
             'username': forms.TextInput(attrs={'class': 'form-control'}),
@@ -88,48 +93,29 @@ class CustomUserCreationForm(AdminUserCreationForm):
         Método personalizado de guardado
         """
         user = super().save(commit=False)
-        
-        # Configuraciones adicionales al guardar
-        user.email = self.cleaned_data['email']
-        
+        print("Datos del formulario:", self.cleaned_data)  # Imprime los datos del formulario
+        if self.errors:
+            print("Errores del formulario:", self.errors)  # Imprime los errores del formulario        
         if commit:
             user.save()
-        
         return user
 
 
 class CustomUserChangeForm(UserChangeForm):
-    """
-    Formulario para actualización de datos de usuario
-    """
     class Meta:
         model = CustomUser
         fields = (
             'username', 
             'email', 
+            'first_name', 
+            'last_name', 
             'phone_number', 
             'birth_date', 
-            'gender'
+            'gender', 
+            'is_staff', 
+            'is_superuser', 
+            'is_verified'
         )
-        widgets = {
-            'username': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'gender': forms.Select(attrs={'class': 'form-control'})
-        }
-
-    def clean_email(self):
-        """
-        Validación de email único al actualizar
-        """
-        email = self.cleaned_data.get('email')
-        
-        # Excluir el usuario actual de la validación
-        if CustomUser.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
-            raise ValidationError(_("Ya existe un usuario con este correo electrónico."))
-        
-        return email
 
 
 class UserProfileUpdateForm(forms.ModelForm):

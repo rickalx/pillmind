@@ -12,19 +12,38 @@ class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
     form = CustomUserChangeForm
     model = CustomUser
-    list_display = ['username', 'email', 'is_staff']
+    list_display = ['username', 'email', 'is_staff', 'is_verified']
     inlines = (PerfilProfesionalInline,)
 
-    fieldsets = UserAdmin.fieldsets + (
-        (None, {'fields': ('phone_number', 'birth_date')}),
+    fieldsets = (
+        (None, {'fields': ('username', 'password')}),
+        ('Información Personal', {'fields': ('first_name', 'last_name', 'email', 'phone_number', 'birth_date', 'gender')}),
+        ('Permisos', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_verified', 'groups', 'user_permissions')}),
+        ('Fechas importantes', {'fields': ('last_login', 'date_joined')}),
     )
-    add_fieldsets = UserAdmin.add_fieldsets + (
-        (None, {'fields': ('phone_number', 'birth_date')}),
+    
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('username', 'email', 'password1', 'password2'),
+        }),
+        ('Información Personal', {
+            'fields': ('first_name', 'last_name', 'phone_number', 'birth_date', 'gender'),
+        }),
+        ('Permisos', {
+            'fields': ('is_staff', 'is_superuser', 'is_verified'),
+        }),
     )
 
     def get_form(self, request, obj=None, **kwargs):
         print("Fieldsets:", self.fieldsets)
         return super().get_form(request, obj, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        # Imprime los errores del formulario en la consola
+        if form.errors:
+            print("Errores del formulario:", form.errors)
+        super().save_model(request, obj, form, change)
 
 admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Especialidad)
