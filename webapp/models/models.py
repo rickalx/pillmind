@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
+from .soft_delete import SoftDeleteModel
 
 #from .user import CustomUser  
 
@@ -25,7 +26,7 @@ class Rol(models.Model):
     def __str__(self):
         return self.nombre
 
-class PerfilProfesional(models.Model):
+class PerfilProfesional(SoftDeleteModel):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL, 
         on_delete=models.CASCADE, 

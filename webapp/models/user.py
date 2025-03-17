@@ -5,8 +5,9 @@ from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from datetime import date
+from .soft_delete import SoftDeleteModel
 
-class CustomUser(AbstractUser):
+class CustomUser(AbstractUser, SoftDeleteModel):
     GENDER_CHOICES = [
         ('M', 'Masculino'),
         ('F', 'Femenino'),

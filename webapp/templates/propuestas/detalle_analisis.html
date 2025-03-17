@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Detalle de Análisis de Propuesta" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{% trans "Detalle de Análisis de Propuesta" %}</h4>
+                    <span class="badge bg-{{ analisis.estado|lower }}">
+                        {{ analisis.get_estado_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3>
+                                {% if analisis.usuario %}
+                                    {{ analisis.usuario.username }}
+                                {% else %}
+                                    {{ analisis.nombre_usuario|default:"Usuario eliminado" }}
+                                {% endif %}
+                            </h3>
+                            <p class="text-muted">
+                                <strong>{% trans "Fecha:" %}</strong> {{ analisis.fecha_analisis|date:"d/m/Y H:i" }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if perms.webapp.change_analisispropuesta %}
+                            <a href="{% url 'analisis_propuesta_update' analisis.id %}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> {% trans "Editar" %}
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'analisis_propuesta_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> {% trans "Volver" %}
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if analisis.url_propuesta %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "URL de la Propuesta" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <a href="{{ analisis.url_propuesta }}" target="_blank" class="d-block">
+                                {{ analisis.url_propuesta }}
+                                <i class="fas fa-external-link-alt ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "Contenido del Análisis" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="bg-light p-3 rounded">
+                                {{ analisis.contenido|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{% trans "Información General" %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>{% trans "Estado:" %}</strong> 
+                                        <span class="badge bg-{{ analisis.estado|lower }}">
+                                            {{ analisis.get_estado_display }}
+                                        </span>
+                                    </p>
+                                    
+                                    {% if analisis.palabras_clave %}
+                                    <p><strong>{% trans "Palabras Clave:" %}</strong></p>
+                                    <div class="mb-3">
+                                        {% for palabra in analisis.palabras_clave.split %}
+                                            <span class="badge bg-secondary">{{ palabra }}</span>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                    
+                                    {% if analisis.prompts.all %}
+                                    <p><strong>{% trans "Prompts Utilizados:" %}</strong></p>
+                                    <div class="list-group">
+                                        {% for prompt in analisis.prompts.all %}
+                                        <a href="{% url 'prompt_detail' prompt.id %}" class="list-group-item list-group-item-action">
+                                            {{ prompt.objetivo }} (v{{ prompt.version }})
+                                        </a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{% trans "Información del Autor" %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>{% trans "Autor:" %}</strong> 
+                                        {% if analisis.usuario %}
+                                            {{ analisis.usuario.username }}
+                                        {% else %}
+                                            {{ analisis.nombre_usuario|default:"Usuario eliminado" }}
+                                        {% endif %}
+                                    </p>
+                                    <p><strong>{% trans "Email:" %}</strong> 
+                                        {% if analisis.usuario %}
+                                            {{ analisis.usuario.email }}
+                                        {% else %}
+                                            {{ analisis.email_usuario|default:"No disponible" }}
+                                        {% endif %}
+                                    </p>
+                                    <p><strong>{% trans "Fecha de creación:" %}</strong> {{ analisis.fecha_analisis|date:"d/m/Y H:i" }}</p>
+                                    <p><strong>{% trans "Última modificación:" %}</strong> {{ analisis.fecha_ultima_modificacion|date:"d/m/Y H:i" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if analisis.prompts_utilizados %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "Prompts Utilizados (JSON)" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="bg-light p-3 rounded">{{ analisis.prompts_utilizados|pprint }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-borrador {
+        background-color: #6c757d;
+    }
+    .bg-publicado {
+        background-color: #28a745;
+    }
+    .bg-revisado {
+        background-color: #17a2b8;
+    }
+    .bg-en_revision {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    .bg-rechazado {
+        background-color: #dc3545;
+    }
+    
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+</style>
+{% endblock %}

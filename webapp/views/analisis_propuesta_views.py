@@ -24,7 +24,7 @@ class AnalisisPropuestaCreateView(LoginRequiredMixin, CreateView):
 class AnalisisPropuestaUpdateView(LoginRequiredMixin, UpdateView):
     model = AnalisisPropuesta
     form_class = AnalisisPropuestaForm
-    template_name = 'propuestas/analisis_propuesta.html'
+    template_name = 'propuestas/editar_analisis_propuesta.html'
     success_url = reverse_lazy('analisis_propuesta_list')
     
     def get_queryset(self):

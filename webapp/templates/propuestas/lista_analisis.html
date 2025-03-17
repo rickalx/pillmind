@@ -62,6 +62,9 @@
                                     {% trans "Última modificación:" %} {{ analisis.fecha_ultima_modificacion|date:"d/m/Y H:i" }}
                                 </small>
                                 <div>
+                                    <a href="{% url 'analisis_propuesta_detail' analisis.id %}" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-eye"></i> {% trans "Detalle" %}
+                                    </a>
                                     <a href="{% url 'analisis_propuesta_update' analisis.id %}" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-edit"></i> {% trans "Editar" %}
                                     </a>

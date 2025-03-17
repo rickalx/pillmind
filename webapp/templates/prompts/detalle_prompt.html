@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Detalle de Prompt" %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">{% trans "Detalle de Prompt" %}</h4>
+                    <span class="badge bg-{{ prompt.estado|lower }}">
+                        {{ prompt.get_estado_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <h3>{{ prompt.objetivo }}</h3>
+                            <p class="text-muted">
+                                <strong>{% trans "Versión:" %}</strong> {{ prompt.version }} | 
+                                <strong>{% trans "Autor:" %}</strong> {{ prompt.get_autor_display }}
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            {% if perms.webapp.change_prompt %}
+                            <a href="{% url 'prompt_update' prompt.id %}" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> {% trans "Editar" %}
+                            </a>
+                            {% endif %}
+                            <a href="{% url 'prompt_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> {% trans "Volver" %}
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "Texto del Prompt" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="bg-light p-3 rounded">{{ prompt.texto }}</pre>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{% trans "Información General" %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>{% trans "Rol de IA:" %}</strong> 
+                                        {% if prompt.rol_ia %}
+                                            {{ prompt.rol_ia.nombre }}
+                                        {% else %}
+                                            {% trans "No especificado" %}
+                                        {% endif %}
+                                    </p>
+                                    
+                                    <p><strong>{% trans "Especialidades:" %}</strong></p>
+                                    {% if prompt.especialidades.all %}
+                                        <div class="mb-3">
+                                            {% for especialidad in prompt.especialidades.all %}
+                                                <span class="badge bg-info">{{ especialidad.nombre }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted">{% trans "No hay especialidades asignadas" %}</p>
+                                    {% endif %}
+                                    
+                                    <p><strong>{% trans "Etiquetas:" %}</strong></p>
+                                    {% if prompt.etiquetas %}
+                                        <div class="mb-3">
+                                            {% for etiqueta in prompt.etiquetas %}
+                                                <span class="badge bg-secondary">{{ etiqueta }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    {% else %}
+                                        <p class="text-muted">{% trans "No hay etiquetas asignadas" %}</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="card mb-4">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{% trans "Información del Autor" %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><strong>{% trans "Autor:" %}</strong> {{ prompt.get_autor_display }}</p>
+                                    <p><strong>{% trans "Email:" %}</strong> {{ prompt.get_autor_email }}</p>
+                                    <p><strong>{% trans "Fecha de creación:" %}</strong> {{ prompt.fecha_creacion|date:"d/m/Y H:i" }}</p>
+                                    <p><strong>{% trans "Última modificación:" %}</strong> {{ prompt.fecha_ultima_modificacion|date:"d/m/Y H:i" }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {% if historial_modificaciones %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "Historial de Modificaciones" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="historialAccordion">
+                                {% for modificacion in historial_modificaciones %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                                            <strong>{{ modificacion.version }}</strong> - {{ modificacion.fecha_modificacion|date:"d/m/Y H:i" }}
+                                        </button>
+                                    </h2>
+                                    <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#historialAccordion">
+                                        <div class="accordion-body">
+                                            <pre class="bg-light p-3 rounded">{{ modificacion.texto_anterior }}</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if analisis_relacionados %}
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "Análisis de Propuestas Relacionados" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="list-group">
+                                {% for analisis in analisis_relacionados %}
+                                <a href="{% url 'analisis_propuesta_update' analisis.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">
+                                            {% if analisis.usuario %}
+                                                {{ analisis.usuario.username }}
+                                            {% else %}
+                                                {{ analisis.nombre_usuario|default:"Usuario eliminado" }}
+                                            {% endif %}
+                                        </h5>
+                                        <small>{{ analisis.fecha_analisis|date:"d/m/Y" }}</small>
+                                    </div>
+                                    <p class="mb-1">{{ analisis.get_resumen }}</p>
+                                    <small class="text-muted">
+                                        <span class="badge bg-{{ analisis.estado|lower }}">
+                                            {{ analisis.get_estado_display }}
+                                        </span>
+                                    </small>
+                                </a>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .bg-borrador {
+        background-color: #6c757d;
+    }
+    .bg-publicado {
+        background-color: #28a745;
+    }
+    .bg-revisado {
+        background-color: #17a2b8;
+    }
+    .bg-en_revision {
+        background-color: #ffc107;
+        color: #212529;
+    }
+    .bg-rechazado {
+        background-color: #dc3545;
+    }
+    
+    pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}{% if form.instance.id %}{% trans "Editar Prompt" %}{% else %}{% trans "Nuevo Prompt" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-10 offset-md-1">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        {% if form.instance.id %}
+                            {% trans "Editar Prompt" %}
+                        {% else %}
+                            {% trans "Nuevo Prompt" %}
+                        {% endif %}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                        <strong>{% trans "Por favor corrija los siguientes errores:" %}</strong>
+                        <ul>
+                            {% for field in form %}
+                                {% for error in field.errors %}
+                                    <li>{{ field.label }}: {{ error }}</li>
+                                {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <form method="post" class="form">
+                        {% csrf_token %}
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.objetivo.id_for_label }}">{% trans "Objetivo del Prompt" %}:</label>
+                            {{ form.objetivo }}
+                            {% if form.objetivo.help_text %}
+                                <small class="form-text text-muted">{{ form.objetivo.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.rol_ia.id_for_label }}">{% trans "Rol de IA" %}:</label>
+                            <div class="input-group">
+                                {{ form.rol_ia }}
+                                <div class="input-group-append">
+                                    <a href="{% url 'rol_ia_add' %}" class="btn btn-outline-secondary" id="add_id_rol_ia" onclick="return showAddAnotherPopup(this);">
+                                        <i class="fas fa-plus"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            {% if form.rol_ia.help_text %}
+                                <small class="form-text text-muted">{{ form.rol_ia.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.texto.id_for_label }}">{% trans "Texto del Prompt" %}:</label>
+                            {{ form.texto }}
+                            {% if form.texto.help_text %}
+                                <small class="form-text text-muted">{{ form.texto.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.version.id_for_label }}">{% trans "Versión" %}:</label>
+                            {{ form.version }}
+                            {% if form.version.help_text %}
+                                <small class="form-text text-muted">{{ form.version.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.especialidades.id_for_label }}">{% trans "Especialidades" %}:</label>
+                            {{ form.especialidades }}
+                            {% if form.especialidades.help_text %}
+                                <small class="form-text text-muted">{{ form.especialidades.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.estado.id_for_label }}">{% trans "Estado" %}:</label>
+                            {{ form.estado }}
+                            {% if form.estado.help_text %}
+                                <small class="form-text text-muted">{{ form.estado.help_text }}</small>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-group mb-3">
+                            <label for="{{ form.etiquetas_texto.id_for_label }}">{% trans "Etiquetas" %}:</label>
+                            {{ form.etiquetas_texto }}
+                            {% if form.etiquetas_texto.help_text %}
+                                <small class="form-text text-muted">{{ form.etiquetas_texto.help_text }}</small>
+                            {% endif %}
+                            <small class="form-text text-muted">{% trans "Ingrese las etiquetas separadas por comas, por ejemplo: etiqueta1, etiqueta2" %}</small>
+                        </div>
+                        
+                        {% if form.instance.id %}
+                        <div class="form-group mb-3">
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <h5 class="card-title">{% trans "Información del Prompt" %}</h5>
+                                    <p class="card-text">
+                                        <strong>{% trans "Creado por" %}:</strong> 
+                                        {{ form.instance.get_autor_display }}
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>{% trans "Email" %}:</strong> 
+                                        {{ form.instance.get_autor_email }}
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>{% trans "Fecha de creación" %}:</strong> 
+                                        {{ form.instance.fecha_creacion|date:"d/m/Y H:i" }}
+                                    </p>
+                                    <p class="card-text">
+                                        <strong>{% trans "Última modificación" %}:</strong> 
+                                        {{ form.instance.fecha_ultima_modificacion|date:"d/m/Y H:i" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if historial_modificaciones %}
+                        <div class="form-group mb-3">
+                            <div class="card bg-light">
+                                <div class="card-header">
+                                    <h5 class="mb-0">{% trans "Historial de Modificaciones" %}</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="accordion" id="historialAccordion">
+                                        {% for modificacion in historial_modificaciones %}
+                                        <div class="accordion-item">
+                                            <h2 class="accordion-header" id="heading{{ forloop.counter }}">
+                                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ forloop.counter }}" aria-expanded="false" aria-controls="collapse{{ forloop.counter }}">
+                                                    <strong>{{ modificacion.version }}</strong> - {{ modificacion.fecha_modificacion|date:"d/m/Y H:i" }}
+                                                </button>
+                                            </h2>
+                                            <div id="collapse{{ forloop.counter }}" class="accordion-collapse collapse" aria-labelledby="heading{{ forloop.counter }}" data-bs-parent="#historialAccordion">
+                                                <div class="accordion-body">
+                                                    <pre class="bg-light p-3 rounded">{{ modificacion.texto_anterior }}</pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% endif %}
+                        
+                        <div class="form-group mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                {% if form.instance.id %}
+                                    {% trans "Actualizar Prompt" %}
+                                {% else %}
+                                    {% trans "Crear Prompt" %}
+                                {% endif %}
+                            </button>
+                            <a href="{% url 'prompt_list' %}" class="btn btn-secondary">{% trans "Cancelar" %}</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/popup_response.js' %}"></script>
+<script>
+    // Validación adicional para el campo de etiquetas JSON
+    document.addEventListener('DOMContentLoaded', function() {
+        const etiquetasField = document.getElementById('{{ form.etiquetas_texto.id_for_label }}');
+        
+        if (etiquetasField) {
+            etiquetasField.addEventListener('blur', function() {
+                try {
+                    if (this.value.trim() !== '') {
+                        JSON.parse(this.value);
+                        this.classList.remove('is-invalid');
+                        this.classList.add('is-valid');
+                    }
+                } catch (e) {
+                    this.classList.remove('is-valid');
+                    this.classList.add('is-invalid');
+                    
+                    // Crear mensaje de error si no existe
+                    let errorDiv = this.nextElementSibling;
+                    if (!errorDiv || !errorDiv.classList.contains('invalid-feedback')) {
+                        errorDiv = document.createElement('div');
+                        errorDiv.classList.add('invalid-feedback');
+                        this.parentNode.insertBefore(errorDiv, this.nextSibling);
+                    }
+                    errorDiv.textContent = "{% trans 'El formato JSON no es válido' %}";
+                }
+            });
+        }
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const etiquetasField = document.getElementById('{{ form.etiquetas_texto.id_for_label }}');
+        
+        if (etiquetasField) {
+            etiquetasField.addEventListener('blur', function() {
+                const etiquetas = this.value.split(',').map(etiqueta => etiqueta.trim()).filter(etiqueta => etiqueta !== '');
+                this.value = etiquetas.join(', '); // Formatea las etiquetas separadas por comas
+            });
+        }
+    });
+</script>
+{% endblock %}

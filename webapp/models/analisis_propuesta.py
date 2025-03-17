@@ -1,8 +1,9 @@
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
+from .soft_delete import SoftDeleteModel
 
-class AnalisisPropuesta(models.Model):
+class AnalisisPropuesta(SoftDeleteModel):
     # Definición de estados
     class Estado(models.TextChoices):
         BORRADOR = 'BORRADOR', _('Borrador')
@@ -51,12 +52,20 @@ class AnalisisPropuesta(models.Model):
         help_text=_('Descripción detallada del análisis de la propuesta')
     )
 
-    # Prompts utilizados
+    # Prompts utilizados (JSONField para compatibilidad con datos existentes)
     prompts_utilizados = models.JSONField(
-        verbose_name=_('Prompts Utilizados'),
+        verbose_name=_('Prompts Utilizados (JSON)'),
         blank=True, 
         null=True,
-        help_text=_('Registro de prompts utilizados en el análisis')
+        help_text=_('Registro de prompts utilizados en el análisis (formato JSON)')
+    )
+    
+    # Relación con prompts (para mejor integración)
+    prompts = models.ManyToManyField(
+        'Prompt',
+        blank=True,
+        related_name='analisis_propuestas',
+        verbose_name=_('Prompts Utilizados')
     )
 
     # Fecha de análisis

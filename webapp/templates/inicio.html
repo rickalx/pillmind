@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}PillMind - Democratizando la Comprensión Electoral{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Banner y botón principal -->
+    <div class="row mb-5">
+        <div class="col-md-10 offset-md-1 text-center">
+            <h1 class="display-4 fw-bold text-black">Factibilidad de propuestas de campaña</h1>
+            <p class="lead mb-4">Accede a nuestro bot para empezar:</p>
+            <a href="https://t.me/factibleBot" class="btn btn-primary btn-lg shadow-sm">
+                <i class="fab fa-telegram-plane me-2"></i> factibleBot
+            </a>
+        </div>
+    </div>
+
+    <!-- Sección de problema y solución -->
+    <div class="row mt-5">
+        <div class="col-md-10 offset-md-1">
+            <!-- El Problema -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="problema-icon-bg rounded-circle p-3 me-3">
+                            <i class="fas fa-exclamation-triangle text-white fs-4"></i>
+                        </div>
+                        <h3 class="card-title mb-0 texto-problema">El Problema</h3>
+                    </div>
+                    <p class="card-text">En la era actual, los ciudadanos se enfrentan a:</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item border-0 d-flex align-items-center">
+                            <i class="fas fa-times-circle icono-problema me-3"></i>
+                            Propuestas electorales complejas y poco transparentes
+                        </li>
+                        <li class="list-group-item border-0 d-flex align-items-center">
+                            <i class="fas fa-times-circle icono-problema me-3"></i>
+                            Información fragmentada y confusa
+                        </li>
+                        <li class="list-group-item border-0 d-flex align-items-center">
+                            <i class="fas fa-times-circle icono-problema me-3"></i>
+                            Dificultad para entender el impacto real de las promesas políticas
+                        </li>
+                        <li class="list-group-item border-0 d-flex align-items-center">
+                            <i class="fas fa-times-circle icono-problema me-3"></i>
+                            Desinformación y manipulación mediática
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Nuestra Solución -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="solucion-icon-bg rounded-circle p-3 me-3">
+                            <i class="fas fa-lightbulb text-white fs-4"></i>
+                        </div>
+                        <h3 class="card-title mb-0 texto-solucion">Nuestra Solución: PillMind</h3>
+                    </div>
+                    <p class="lead fw-bold">Somos una plataforma que traduce las propuestas electorales a un lenguaje claro, cercano y comprensible para el ciudadano común.</p>
+                </div>
+            </div>
+
+            <!-- Propuesta de Valor -->
+            <div class="card mb-4 border-0 shadow-sm">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="valor-icon-bg rounded-circle p-3 me-3">
+                            <i class="fas fa-star text-white fs-4"></i>
+                        </div>
+                        <h3 class="card-title mb-0 texto-valor">Nuestra Propuesta de Valor</h3>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 card-valor">
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="fas fa-language fs-1 "></i>
+                                    </div>
+                                    <h5 class="card-title text-center">Análisis de propuestas en lenguaje sencillo</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 card-valor">
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="fas fa-users fs-1"></i>
+                                    </div>
+                                    <h5 class="card-title text-center">Herramienta de empoderamiento ciudadano</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100 card-valor">
+                                <div class="card-body">
+                                    <div class="text-center mb-3">
+                                        <i class="fas fa-vote-yea fs-1"></i>
+                                    </div>
+                                    <h5 class="card-title text-center">Transparencia electoral al alcance de todos</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Descripción detallada -->
+            <div class="info-section border-0 shadow-sm p-4">
+                <div class="d-flex">
+                    <div class="me-3">
+                        <i class="fas fa-info-circle fs-2 info-icon"></i>
+                    </div>
+                    <div>
+                        <p class="mb-0">PillMind es una plataforma tecnológica que transforma propuestas electorales complejas en información clara y accesible para ciudadanos comunes. Utilizando inteligencia artificial y análisis multidisciplinario, la herramienta traduce el lenguaje técnico político a explicaciones sencillas, verificando datos y proporcionando perspectivas objetivas.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Objetivo y función -->
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="card-title titulo-seccion pb-2">
+                                <i class="fas fa-bullseye me-2"></i> Nuestro Objetivo
+                            </h4>
+                            <p class="card-text">Combatir la desinformación, empoderar al votante y facilitar la toma de decisiones informadas durante procesos electorales. La plataforma ofrece análisis de propuestas desde diferentes ángulos (económico, social, histórico), con una interfaz amigable y diseño intuitivo.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body p-4">
+                            <h4 class="card-title titulo-seccion pb-2">
+                                <i class="fas fa-handshake me-2"></i> Nuestro Compromiso
+                            </h4>
+                            <p class="card-text">Más allá de ser una herramienta tecnológica, PillMind representa un compromiso con la transparencia democrática, permitiendo que ciudadanos comprendan el verdadero impacto de las promesas políticas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Call to Action -->
+            <div class="text-center mt-5">
+                <a href="{% url 'analisis_propuesta_list' %}" class="btn btn-primary btn-lg shadow">
+                    <i class="fas fa-clipboard-list me-2"></i> Ver Análisis de Propuestas
+                </a>
+                <p></p>
+                <p>¿Listo para explorar?</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
