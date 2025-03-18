@@ -43,6 +43,17 @@
                             <pre class="bg-light p-3 rounded">{{ prompt.texto }}</pre>
                         </div>
                     </div>
+                    
+                    {% if prompt.formato_respuesta %}
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0">{% trans "Formato de Respuesta" %}</h5>
+                        </div>
+                        <div class="card-body">
+                            <pre class="bg-light p-3 rounded">{{ prompt.formato_respuesta }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
 
                     <div class="row">
                         <div class="col-md-6">

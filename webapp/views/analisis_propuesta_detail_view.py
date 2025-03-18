@@ -3,7 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from ..models.analisis_propuesta import AnalisisPropuesta
 
-class AnalisisPropuestaDetailView(LoginRequiredMixin, DetailView):
+class AnalisisPropuestaDetailView(DetailView):
     """
     Vista para ver los detalles de un análisis de propuesta
     """

@@ -4,13 +4,9 @@ import requests
 from dotenv import load_dotenv
 import os
 from bs4 import BeautifulSoup
-import logging
-
-from ai_handler import generate
-
-# Configurar el logging
-#logging.basicConfig(filename='errores.log', level=logging.ERROR, format='%(asctime)s - %(levelname)s - %(message)s')
-logging.basicConfig(filename='errores.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+from .ai_handler import generate
+from .database_handler import guardar_analisis_propuesta_async
+from utils.logging_config import logger  # Importa el logger centralizado
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
@@ -19,12 +15,14 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
 async def start(update, context):
+    logger.info(f"Comando /start recibido de usuario: {update.effective_user.id} - {update.effective_user.username}")
     context.user_data['pregunta_actual'] = 1
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Hola, soy FactibleBot, un asistente de inteligencia artificial que te ayudará a evaluar la factibilidad de propuestas de campaña política.")
     await pregunta(update, context)
 
 async def pregunta(update, context):
     pregunta_actual = context.user_data['pregunta_actual']
+    logger.debug(f"Mostrando pregunta {pregunta_actual} al usuario {update.effective_chat.id}")
 
     if pregunta_actual == 1:
         texto_pregunta = "¿Qué tan realista crees que es la propuesta?"
@@ -56,7 +54,7 @@ async def pregunta(update, context):
             if current_message.text != texto_pregunta or current_message.reply_markup != reply_markup:
                 await context.bot.edit_message_text(chat_id=update.effective_chat.id, message_id=current_message.message_id, text=texto_pregunta, reply_markup=reply_markup)
             else:
-                logging.info("El mensaje no se modificó porque el contenido y el markup son los mismos.")
+                logger.info("El mensaje no se modificó porque el contenido y el markup son los mismos.")
         else:
             mensaje = await context.bot.send_message(chat_id=update.effective_chat.id, text=texto_pregunta, reply_markup=reply_markup)
             context.user_data['mensaje_pregunta'] = mensaje
@@ -66,6 +64,7 @@ async def pregunta(update, context):
 
 async def respuesta(update, context):
     query = update.callback_query
+    logger.info(f"Respuesta recibida de {update.effective_user.id}: {query.data}")
     await query.answer()
     if query.data == "otra_propuesta":
         context.user_data['pregunta_actual'] = 1
@@ -100,7 +99,7 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         mensaje = await context.bot.send_message(chat_id=update.effective_chat.id, text=texto_pregunta, reply_markup=reply_markup)
         context.user_data['mensaje_pregunta'] = mensaje
         context.user_data['pregunta_actual'] = 5
-        logging.info("Pregunta 5 enviada directamente desde handle_text")
+        logger.info("Pregunta 5 enviada directamente desde handle_text")
 
 async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Maneja los mensajes que contienen URLs."""
@@ -114,19 +113,28 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE):
     url = update.message.text
 
     try:
-        logging.info(f"Procesando URL: {url}")
+        logger.info(f"Procesando URL: {url}")
         response = requests.get(url)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, "html.parser")
         texto = soup.get_text().strip()
-        logging.info(f"Texto extraído: {texto[:100]}...")  # Log solo los primeros 100 caracteres
+        logger.info(f"Texto extraído: {texto[:100]}...")  # Log solo los primeros 100 caracteres
 
-        respuesta_ia = generate(texto)
-        logging.info(f"Respuesta generada: {respuesta_ia[:100]}...")  # Log solo los primeros 100 caracteres
+        respuesta_ia = await generate(texto)
+        logger.info(f"Respuesta generada: {respuesta_ia[:100]}...")  # Log solo los primeros 100 caracteres
 
         await send_long_message(context.bot, update.effective_chat.id, respuesta_ia)
-        # await agregar_datos_desde_texto(respuesta_ia)
         
+        # Guardar el análisis de propuesta en la base de datos
+        # No especificar IDs de prompts, se usará el predeterminado de la base de datos
+        prompts_utilizados = []
+        await guardar_analisis_propuesta_async(
+            usuario=update.effective_user,
+            url_propuesta=url,
+            contenido=respuesta_ia,
+            prompts_utilizados=prompts_utilizados
+        )
+
         # Enviar mensaje adicional sobre la página web
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Si quieres profundizar, puedes visitar nuestra pagina web: https://www.dataec593.com/pillmind/")
         
@@ -138,20 +146,22 @@ async def handle_url(update: Update, context: ContextTypes.DEFAULT_TYPE):
         mensaje = await context.bot.send_message(chat_id=update.effective_chat.id, text=texto_pregunta, reply_markup=reply_markup)
         context.user_data['mensaje_pregunta'] = mensaje
         context.user_data['pregunta_actual'] = 5
-        logging.info("Pregunta 5 enviada directamente desde handle_url")
+        logger.info("Pregunta 5 enviada directamente desde handle_url")
 
     except requests.exceptions.RequestException as e:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Error al procesar la URL: {e}")
-        logging.error(f"Error al procesar la URL: {e}")
+        logger.error(f"Error al procesar la URL: {e}")
     except Exception as e:
         await context.bot.send_message(chat_id=update.effective_chat.id, text=f"Error inesperado: {e}")
-        logging.error(f"Error inesperado: {e}")
+        logger.error(f"Error inesperado: {e}")
 
 def setup_handlers(application):
     """Configura los manejadores para la aplicación del bot."""
+    logger.info("Configurando manejadores de la aplicación")
     application.add_handler(CommandHandler("start", start))
     application.add_handler(MessageHandler(filters.TEXT & filters.Entity('url'), handle_url))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.Entity('url'), handle_text))
     application.add_handler(CallbackQueryHandler(respuesta))
     
+    logger.info("Manejadores configurados correctamente")
     return application

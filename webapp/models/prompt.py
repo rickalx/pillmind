@@ -84,6 +84,13 @@ class Prompt(SoftDeleteModel):
     texto = models.TextField(
         verbose_name=_('Texto del Prompt')
     )
+    
+    # Formato de respuesta esperado
+    formato_respuesta = models.TextField(
+        verbose_name=_('Formato de Respuesta'),
+        blank=True,
+        help_text=_('Estructura o formato que debe seguir la respuesta del modelo de IA')
+    )
 
     # Información de versión
     version = models.CharField(
@@ -120,7 +127,8 @@ class Prompt(SoftDeleteModel):
     )
 
     # Información de autor desnormalizada
-    autor_info = models.OneToOneField(
+    # Cambiado de OneToOneField a ForeignKey
+    autor_info = models.ForeignKey(
         AutorInfo, 
         on_delete=models.SET_NULL, 
         null=True, 
@@ -153,6 +161,13 @@ class Prompt(SoftDeleteModel):
         verbose_name=_('Estado')
     )
     
+    # Nuevo campo para indicar si es el prompt predeterminado para el chatbot
+    es_predeterminado = models.BooleanField(
+        default=False, 
+        verbose_name=_('Es predeterminado para chatbot'),
+        help_text=_('Si está marcado, este prompt se utilizará por defecto en el chatbot')
+    )
+    
     # Método para cambiar estado
     def cambiar_estado(self, nuevo_estado):
         """
@@ -176,6 +191,10 @@ class Prompt(SoftDeleteModel):
         """
         Sobrescribir método save para gestionar historial y autor
         """
+        if self.es_predeterminado:
+            # Desactivar cualquier otro prompt predeterminado
+            Prompt.objects.filter(es_predeterminado=True).exclude(pk=self.pk).update(es_predeterminado=False)
+        
         # Crear o actualizar información de autor
         if self.autor:
             autor_info, created = self.AutorInfo.objects.get_or_create(

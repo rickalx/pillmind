@@ -27,22 +27,13 @@ class AnalisisPropuestaUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'propuestas/editar_analisis_propuesta.html'
     success_url = reverse_lazy('analisis_propuesta_list')
     
-    def get_queryset(self):
-        # Permitir editar análisis del usuario actual o donde el nombre de usuario coincide
-        return AnalisisPropuesta.objects.filter(
-            Q(usuario=self.request.user) | 
-            Q(nombre_usuario=self.request.user.username)
-        )
+    # No get_queryset method - allows editing any proposal for logged-in users
 
-class AnalisisPropuestaListView(LoginRequiredMixin, ListView):
+class AnalisisPropuestaListView(ListView):  # Not LoginRequiredMixin - allows all users to view list
     model = AnalisisPropuesta
     template_name = 'propuestas/lista_analisis.html'
     context_object_name = 'analisis_propuestas'
 
     def get_queryset(self):
-        # Mostrar análisis del usuario actual o análisis donde el nombre de usuario coincide
-        # (para casos donde el usuario fue eliminado pero queremos ver sus análisis)
-        return AnalisisPropuesta.objects.filter(
-            Q(usuario=self.request.user) | 
-            Q(nombre_usuario=self.request.user.username)
-        )
+        # Return all proposals without filtering by user
+        return AnalisisPropuesta.objects.all()

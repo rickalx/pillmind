@@ -22,9 +22,11 @@ class PromptForm(forms.ModelForm):
             'objetivo',
             'rol_ia',
             'texto',
+            'formato_respuesta',
             'version',
             'especialidades',
             'estado',
+            'es_predeterminado',
             # Quitamos 'etiquetas' de los campos del modelo y usamos nuestro campo personalizado
         ]
         exclude = ['etiquetas']
@@ -32,14 +34,17 @@ class PromptForm(forms.ModelForm):
             'objetivo': forms.TextInput(attrs={'class': 'form-control'}),
             'rol_ia': forms.Select(attrs={'class': 'form-control'}),
             'texto': forms.Textarea(attrs={'class': 'form-control', 'rows': 8}),
+            'formato_respuesta': forms.Textarea(attrs={'class': 'form-control', 'rows': 5}),
             'version': forms.TextInput(attrs={'class': 'form-control'}),
             'especialidades': forms.SelectMultiple(attrs={'class': 'form-control'}),
             'estado': forms.Select(attrs={'class': 'form-control'}),
+            'es_predeterminado': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
         help_texts = {
             'objetivo': _('Propósito principal del prompt'),
             'rol_ia': _('Rol que debe asumir la IA al utilizar este prompt'),
             'texto': _('Contenido completo del prompt'),
+            'formato_respuesta': _('Estructura que debe seguir la respuesta generada por la IA'),
             'version': _('Versión del prompt (ej: 1.0.0)'),
             'especialidades': _('Especialidades relacionadas con este prompt'),
             'estado': _('Estado actual del prompt'),

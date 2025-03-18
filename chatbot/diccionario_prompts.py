@@ -33,7 +33,6 @@ FACTIBILITY_PROMPTS = {
 
     Propuesta: {texto}""",
         "prompt_general_compacto": """
-    [INSTRUCCIONES DEL SISTEMA]
     Actúa como un Analista Político Senior especializado en el contexto ecuatoriano. Tu tarea es evaluar exhaustivamente la factibilidad de una propuesta de campaña política, considerando un proceso de verificación de hechos (fact-checking), análisis legal, económico, social, técnico y ambiental. Debes:
 
     1. Recibir la propuesta de campaña del usuario (en texto libre).
@@ -50,7 +49,7 @@ FACTIBILITY_PROMPTS = {
     12. La respuesta debe ser clara, muy muy corta y concisa para facilitar la lectura y comprensión.
     13. Si usas siglas, agrega en parentesis su significado.
 
-    Necesito una Respuesta Compacta: una síntesis de no más de 10 líneas que contenga lo más importante de la evaluación, con el siguiente formato:
+    Necesito una Respuesta Compacta y EXCLUSIVAMENTE en el siguiente formato, SIN texto adicional:
 
     📛<b>Propuesta:</b> un nombre conciso y relevante.(1 linea)
     📝<b>Resumen:</b> una descripción breve y clara.(1 linea)

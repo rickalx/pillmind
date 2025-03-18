@@ -65,9 +65,11 @@
                                     <a href="{% url 'analisis_propuesta_detail' analisis.id %}" class="btn btn-sm btn-outline-info">
                                         <i class="fas fa-eye"></i> {% trans "Detalle" %}
                                     </a>
+                                    {% if user.is_authenticated %}
                                     <a href="{% url 'analisis_propuesta_update' analisis.id %}" class="btn btn-sm btn-outline-primary">
                                         <i class="fas fa-edit"></i> {% trans "Editar" %}
                                     </a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>

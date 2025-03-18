@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Guayaquil'  # Para Ecuador
 
 USE_I18N = True
 
@@ -130,16 +130,38 @@ AUTH_USER_MODEL = 'webapp.CustomUser'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'localtime': {
+            '()': 'utils.logging_config.LocalTimeFormatter',
+            'format': '%(asctime)s - %(levelname)s - %(message)s'
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'localtime',
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'errores.log',
+            'formatter': 'localtime',
         },
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
-            'level': 'CRITICAL',
+            'handlers': ['console', 'file'],
+            'level': 'WARNING',
+            'propagate': True,
         },
+        'pillmind': {
+            'handlers': ['console', 'file'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'root': {
+        'handlers': ['console', 'file'],
+        'level': 'INFO',
     },
 }
 

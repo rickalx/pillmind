@@ -46,6 +46,15 @@ class AnalisisPropuesta(SoftDeleteModel):
         null=True
     )
 
+    # Título de la propuesta
+    titulo = models.CharField(
+        max_length=255,
+        verbose_name=_('Título de la Propuesta'),
+        help_text=_('Nombre o título descriptivo de la propuesta'),
+        null=True,
+        blank=True  # Opcional para propuestas existentes
+    )
+
     # Contenido del análisis
     contenido = models.TextField(
         verbose_name=_('Contenido del Análisis'),

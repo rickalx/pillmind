@@ -70,6 +70,17 @@
                         </div>
                         
                         <div class="form-group mb-3">
+                            <label for="{{ form.formato_respuesta.id_for_label }}">{% trans "Formato de Respuesta" %}:</label>
+                            {{ form.formato_respuesta }}
+                            {% if form.formato_respuesta.help_text %}
+                                <small class="form-text text-muted">{{ form.formato_respuesta.help_text }}</small>
+                            {% endif %}
+                            <small class="form-text text-info">
+                                <i class="fas fa-info-circle"></i> {% trans "Define la estructura que debe seguir la respuesta generada por la IA." %}
+                            </small>
+                        </div>
+                        
+                        <div class="form-group mb-3">
                             <label for="{{ form.version.id_for_label }}">{% trans "Versión" %}:</label>
                             {{ form.version }}
                             {% if form.version.help_text %}
@@ -91,6 +102,22 @@
                             {% if form.estado.help_text %}
                                 <small class="form-text text-muted">{{ form.estado.help_text }}</small>
                             {% endif %}
+                        </div>
+
+                        <!-- Nuevo campo para Es Predeterminado -->
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                {{ form.es_predeterminado }}
+                                <label class="form-check-label" for="{{ form.es_predeterminado.id_for_label }}">
+                                    {% trans "Establecer como prompt predeterminado del chatbot" %}
+                                </label>
+                                {% if form.es_predeterminado.help_text %}
+                                    <small class="form-text text-muted d-block">{{ form.es_predeterminado.help_text }}</small>
+                                {% endif %}
+                                <small class="form-text text-warning">
+                                    <i class="fas fa-exclamation-triangle"></i> {% trans "Nota: Al marcar esta opción, cualquier otro prompt que estuviera configurado como predeterminado dejará de serlo." %}
+                                </small>
+                            </div>
                         </div>
                         
                         <div class="form-group mb-3">

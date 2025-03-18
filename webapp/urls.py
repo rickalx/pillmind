@@ -9,7 +9,8 @@ from .views.prompt_views import (
     PromptListView,
     PromptCreateView,
     PromptUpdateView,
-    PromptDetailView
+    PromptDetailView,
+    PromptSetDefaultView
 )
 from .views.rol_ia_views import RolIACreateView
 from .views.inicio_view import InicioView
@@ -27,8 +28,9 @@ urlpatterns = [
     # URLs para prompts
     path('prompts/', PromptListView.as_view(), name='prompt_list'),
     path('prompts/nuevo/', PromptCreateView.as_view(), name='prompt_create'),
-    path('prompts/editar/<pk>/', PromptUpdateView.as_view(), name='prompt_update'),
+    path('prompts/editar/<uuid:pk>/', PromptUpdateView.as_view(), name='prompt_update'),
     path('prompts/detalle/<uuid:pk>/', PromptDetailView.as_view(), name='prompt_detail'),
+    path('prompts/establecer-predeterminado/<uuid:pk>/', PromptSetDefaultView.as_view(), name='prompt_set_default'),
     
     # URLs para roles de IA
     path('roles-ia/nuevo/', RolIACreateView.as_view(), name='rol_ia_add'),

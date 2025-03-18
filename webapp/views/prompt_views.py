@@ -4,6 +4,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.utils.translation import gettext_lazy as _
 from django.shortcuts import redirect
 from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.views import View
 
 from ..models.prompt import Prompt, HistorialModificacion, RolIA
 from ..forms.prompt_forms import PromptForm
@@ -18,9 +21,10 @@ class PromptListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         """
-        Obtener todos los prompts no eliminados
+        Usar el manager default (ya filtra por deleted_on__isnull=True)
+        Solo necesitamos ordenar como queremos
         """
-        return Prompt.objects.all().order_by('-fecha_creacion')
+        return super().get_queryset().order_by('-es_predeterminado', '-fecha_ultima_modificacion')
 
 class PromptCreateView(LoginRequiredMixin, CreateView):
     """
@@ -80,3 +84,15 @@ class PromptDetailView(LoginRequiredMixin, DetailView):
         context['analisis_relacionados'] = self.object.analisis_propuestas.all().order_by('-fecha_analisis')
         
         return context
+
+class PromptSetDefaultView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            prompt = Prompt.objects.get(pk=pk)
+            prompt.es_predeterminado = True
+            prompt.save()
+            messages.success(request, f'El prompt "{prompt.objetivo}" ha sido establecido como predeterminado para el chatbot.')
+        except Prompt.DoesNotExist:
+            messages.error(request, 'El prompt no existe.')
+        
+        return HttpResponseRedirect(reverse('prompt_list'))

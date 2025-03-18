@@ -1,90 +1,8 @@
 {% extends "base.html" %}
 {% load i18n %}
+{% load static %}
 
 {% block title %}{% trans "Gestión de Prompts" %}{% endblock %}
-
-{% block content %}
-<div class="container mt-4">
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2>{% trans "Gestión de Prompts" %}</h2>
-            <p class="text-muted">{% trans "Administra tus prompts para análisis de propuestas" %}</p>
-        </div>
-        <div class="col-md-4 text-end">
-            <a href="{% url 'prompt_create' %}" class="btn btn-primary">
-                <i class="fas fa-plus-circle"></i> {% trans "Nuevo Prompt" %}
-            </a>
-        </div>
-    </div>
-
-    {% if prompts %}
-        <div class="row">
-            {% for prompt in prompts %}
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header d-flex justify-content-between align-items-center">
-                            <span class="badge bg-{{ prompt.estado|lower }}">
-                                {{ prompt.get_estado_display }}
-                            </span>
-                            <small class="text-muted">v{{ prompt.version }}</small>
-                        </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ prompt.objetivo }}</h5>
-                            
-                            {% if prompt.rol_ia %}
-                                <p class="card-text">
-                                    <strong>{% trans "Rol IA:" %}</strong> {{ prompt.rol_ia.nombre }}
-                                </p>
-                            {% endif %}
-                            
-                            <p class="card-text text-truncate">{{ prompt.texto|truncatechars:150 }}</p>
-                            
-                            {% if prompt.especialidades.all %}
-                                <div class="mt-2">
-                                    {% for especialidad in prompt.especialidades.all|slice:":3" %}
-                                        <span class="badge bg-info">{{ especialidad.nombre }}</span>
-                                    {% endfor %}
-                                    {% if prompt.especialidades.all.count > 3 %}
-                                        <span class="badge bg-secondary">+{{ prompt.especialidades.all.count|add:"-3" }}</span>
-                                    {% endif %}
-                                </div>
-                            {% endif %}
-                            
-                            {% if prompt.etiquetas %}
-                                <div class="mt-2">
-                                    {% for etiqueta in prompt.etiquetas|slice:":5" %}
-                                        <span class="badge bg-secondary">{{ etiqueta }}</span>
-                                    {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-                        <div class="card-footer bg-transparent">
-                            <div class="d-flex justify-content-between">
-                                <small class="text-muted">
-                                    {% trans "Autor:" %} {{ prompt.get_autor_display }}
-                                </small>
-                                <div>
-                                    <a href="{% url 'prompt_update' prompt.id %}" class="btn btn-sm btn-outline-primary">
-                                        <i class="fas fa-edit"></i> {% trans "Editar" %}
-                                    </a>
-                                    <a href="{% url 'prompt_detail' prompt.id %}" class="btn btn-sm btn-outline-info">
-                                        <i class="fas fa-eye"></i> {% trans "Ver" %}
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> {% trans "No hay prompts disponibles." %}
-            <a href="{% url 'prompt_create' %}" class="alert-link">{% trans "Crear uno nuevo" %}</a>.
-        </div>
-    {% endif %}
-</div>
-{% endblock %}
 
 {% block extra_css %}
 <style>
@@ -104,5 +22,157 @@
     .bg-rechazado {
         background-color: #dc3545;
     }
+    .card-prompt-default {
+        border: 2px solid #ff9800;
+        box-shadow: 0 0.5rem 1rem rgba(255, 152, 0, 0.15);
+    }
+    
+    .badge-default-prompt {
+        background-color: #ff9800;
+        color: white;
+        font-weight: bold;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 10;
+    }
+    
+    /* Estilos modificados para botones */
+    .btn-set-default {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        border-radius: 0.2rem;
+        width: auto !important;
+        flex-grow: 0 !important;
+    }
+    
+    .btn-action-group {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        align-items: center;
+    }
+    
+    .btn-primary-actions {
+        flex-grow: 1;
+        display: flex;
+        gap: 8px; /* Separación entre los botones "Ver" y "Editar" */
+    }
+    
+    .btn-primary-actions .btn {
+        flex-grow: 1;
+    }
+    
+    /* Nuevo: Margen izquierdo para el formulario del botón estrella */
+    .card-footer form {
+        margin-left: 10px;
+    }
 </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>{% trans "Gestión de Prompts" %}</h1>
+        <a href="{% url 'prompt_create' %}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> {% trans "Nuevo Prompt" %}
+        </a>
+    </div>
+
+    <div class="row">
+        {% for prompt in prompts %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 {% if prompt.es_predeterminado %}card-prompt-default{% endif %}">
+                    {% if prompt.es_predeterminado %}
+                        <span class="badge badge-default-prompt">
+                            <i class="fas fa-robot"></i> Prompt del Chatbot
+                        </span>
+                    {% endif %}
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            {{ prompt.objetivo|truncatechars:50 }}
+                        </h5>
+                        <span class="badge {% if prompt.estado == 'ACTIVO' %}bg-success{% elif prompt.estado == 'BORRADOR' %}bg-secondary{% elif prompt.estado == 'EN_REVISION' %}bg-warning{% elif prompt.estado == 'ARCHIVADO' %}bg-danger{% endif %}">
+                            {{ prompt.get_estado_display }}
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text text-muted mb-2">
+                            <small>
+                                <i class="fas fa-user-tag"></i> {{ prompt.rol_ia.nombre|default:"Sin rol asignado" }}
+                            </small>
+                        </p>
+                        
+                        <p class="card-text mb-3">{{ prompt.texto|truncatechars:200 }}</p>
+                        
+                        {% if prompt.especialidades.exists %}
+                        <div class="mb-3">
+                            {% for especialidad in prompt.especialidades.all %}
+                                <span class="badge bg-info text-dark me-1">{{ especialidad.nombre }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        {% if prompt.etiquetas %}
+                        <div class="mb-3">
+                            {% for etiqueta in prompt.etiquetas %}
+                                <span class="badge bg-secondary me-1">{{ etiqueta }}</span>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        
+                        <p class="card-text text-muted">
+                            <small>
+                                <i class="fas fa-code-branch"></i> {{ prompt.version }}
+                                <span class="mx-2">|</span>
+                                <i class="fas fa-calendar-alt"></i> {{ prompt.fecha_modificacion|date:"d/m/Y H:i" }}
+                            </small>
+                        </p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="btn-action-group">
+                            <div class="btn-primary-actions">
+                                <a href="{% url 'prompt_detail' prompt.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-eye"></i> {% trans "Ver" %}
+                                </a>
+                                <a href="{% url 'prompt_update' prompt.id %}" class="btn btn-outline-secondary">
+                                    <i class="fas fa-edit"></i> {% trans "Editar" %}
+                                </a>
+                            </div>
+                            <!-- Botón para establecer como predeterminado (ahora más pequeño y solo para usuarios autenticados) -->
+                            {% if not prompt.es_predeterminado and user.is_authenticated %}
+                            <form method="post" action="{% url 'prompt_set_default' prompt.id %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-warning btn-set-default" 
+                                        data-bs-toggle="tooltip" data-bs-placement="top" 
+                                        title="{% trans 'Establecer como predeterminado' %}">
+                                    <i class="fas fa-star"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12 text-center">
+                <div class="alert alert-info">
+                    {% trans "No hay prompts disponibles. ¡Crea el primero!" %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Inicializar tooltips de Bootstrap
+    document.addEventListener('DOMContentLoaded', function() {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+    });
+</script>
 {% endblock %}

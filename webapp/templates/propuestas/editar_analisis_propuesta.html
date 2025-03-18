@@ -51,16 +51,49 @@
                             {% if form.contenido.help_text %}
                                 <small class="form-text text-muted">{{ form.contenido.help_text }}</small>
                             {% endif %}
+                            
+                            <div class="mt-3">
+                                <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" 
+                                        data-bs-target="#previewContenido" aria-expanded="false" 
+                                        aria-controls="previewContenido">
+                                    {% trans "Mostrar/Ocultar Vista Previa" %}
+                                </button>
+                            </div>
+                            
+                            <div class="collapse mt-2" id="previewContenido">
+                                <div class="card">
+                                    <div class="card-header bg-light">
+                                        <h5 class="mb-0">{% trans "Vista previa del HTML" %}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="htmlPreview" class="border p-3 rounded">
+                                            {% if form.contenido.value %}
+                                                {{ form.contenido.value|safe }}
+                                            {% else %}
+                                                <p class="text-muted">{% trans "No hay contenido para mostrar" %}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        
+                        {% if form.instance.id and form.instance.prompts.all %}
                         <div class="form-group mb-3">
-                            <label for="{{ form.prompts_utilizados.id_for_label }}">{% trans "Prompts Utilizados" %}:</label>
-                            {{ form.prompts_utilizados }}
-                            {% if form.prompts_utilizados.help_text %}
-                                <small class="form-text text-muted">{{ form.prompts_utilizados.help_text }}</small>
-                            {% endif %}
-                            <small class="form-text text-muted">{% trans "Ingrese los prompts en formato JSON, por ejemplo: {\"prompt1\": \"texto\", \"prompt2\": \"texto\"}" %}</small>
+                            <label>{% trans "Prompts Relacionados:" %}</label>
+                            <div class="list-group">
+                                {% for prompt in form.instance.prompts.all %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h5 class="mb-1">{{ prompt.objetivo }} (v{{ prompt.version }})</h5>
+                                        <small class="text-muted">{{ prompt.fecha_creacion|date:"d/m/Y" }}</small>
+                                    </div>
+                                    <p class="mb-1 border-top pt-2 text-muted"><strong>{% trans "Texto del Prompt:" %}</strong></p>
+                                    <pre class="bg-light p-3 rounded text-wrap">{{ prompt.texto }}</pre>
+                                </div>
+                                {% endfor %}
+                            </div>
                         </div>
+                        {% endif %}
                         
                         <div class="form-group mb-3">
                             <label for="{{ form.estado.id_for_label }}">{% trans "Estado" %}:</label>
@@ -157,6 +190,20 @@
                         this.parentNode.insertBefore(errorDiv, this.nextSibling);
                     }
                     errorDiv.textContent = "{% trans 'El formato JSON no es válido' %}";
+                }
+            });
+        }
+        
+        // Actualizar vista previa del contenido HTML
+        const contenidoField = document.getElementById('{{ form.contenido.id_for_label }}');
+        const htmlPreview = document.getElementById('htmlPreview');
+        
+        if (contenidoField && htmlPreview) {
+            contenidoField.addEventListener('input', function() {
+                if (this.value.trim() === '') {
+                    htmlPreview.innerHTML = '<p class="text-muted">{% trans "No hay contenido para mostrar" %}</p>';
+                } else {
+                    htmlPreview.innerHTML = this.value;
                 }
             });
         }
