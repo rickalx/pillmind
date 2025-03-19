@@ -61,6 +61,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Agregar después de SecurityMiddleware
     #'corsheaders.middleware.CorsMiddleware',  # elimina para prod
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -147,6 +148,9 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Directorios adicionales donde buscar archivos estáticos
 STATICFILES_DIRS = [BASE_DIR / "webapp/static"]
+
+# Opcional: compresión y cacheo de archivos estáticos
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
