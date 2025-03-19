@@ -1,0 +1,158 @@
+.navbar {
+    background-color: #006495; /* Primary color */
+    border-bottom: 1px solid #004c70; /* Secondary color */
+}
+.navbar-brand, .nav-link {
+    color: #ffffff !important; /* White text for contrast */
+}
+.navbar-brand {
+    font-weight: bold;
+}
+.nav-link:hover {
+    color: #00a9ce !important; /* Accent color */
+}
+.footer {
+    background-color: #004c70; /* Secondary color */
+    color: #ffffff; /* White text */
+}
+.footer a {
+    color: #00a9ce; /* Accent color */
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+.hero-section {
+    text-align: center;
+    padding: 4rem 1rem;
+    background-color: #f8f9fa; /* Light color */
+}
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #212529; /* Dark color */
+}
+.hero-section p {
+    font-size: 1.25rem;
+    color: #666666; /* Neutral gray */
+}
+.hero-section .btn-primary {
+    background-color: #006495; /* Primary color */
+    border-color: #006495;
+}
+.hero-section .btn-primary:hover {
+    background-color: #004c70; /* Secondary color */
+    border-color: #004c70;
+}
+.btn-primary {
+    background-color: #006495; /* Primary color */
+    border-color: #006495;
+}
+.btn-primary:hover {
+    background-color: #004c70; /* Secondary color */
+    border-color: #004c70;
+}
+.btn-success {
+    background-color: #007a33; /* Success color */
+    border-color: #007a33;
+}
+.btn-warning {
+    background-color: #ffb81c; /* Warning color */
+    border-color: #ffb81c;
+}
+.btn-danger {
+    background-color: #d22630; /* Danger color */
+    border-color: #d22630;
+}
+.btn-info {
+    background-color: #005f8a; /* Info color */
+    border-color: #005f8a;
+}
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    margin-bottom: 1.5rem;
+    border-color: #004c70; /* Secondary color */
+}
+.card-header {
+    font-weight: 500;
+    background-color: #006495; /* Primary color */
+    color: #ffffff; /* White text */
+}
+.alert-success {
+    background-color: #007a33; /* Success color */
+    color: #ffffff; /* White text */
+}
+.alert-warning {
+    background-color: #ffb81c; /* Warning color */
+    color: #212529; /* Dark text */
+}
+.alert-danger {
+    background-color: #d22630; /* Danger color */
+    color: #ffffff; /* White text */
+}
+.alert-info {
+    background-color: #005f8a; /* Info color */
+    color: #ffffff; /* White text */
+}
+
+/* Nuevos estilos para las secciones principales con colores más profesionales */
+
+/* Estilos para "El Problema" */
+.problema-icon-bg {
+    background-color: #D86018; /* Tono naranja oscuro/terracota */
+}
+.texto-problema {
+    color: #D86018;
+}
+.icono-problema {
+    color: #D86018;
+}
+
+/* Estilos para "Nuestra Solución" */
+.solucion-icon-bg {
+    background-color: #008A7B; /* Verde azulado oscuro profesional */
+}
+.texto-solucion {
+    color: #008A7B;
+}
+.icono-solucion {
+    color: #008A7B;
+}
+
+/* Estilos para "Nuestra Propuesta de Valor" */
+.valor-icon-bg {
+    background-color: #2D4B65; /* Azul oscuro complementario */
+}
+.texto-valor {
+    color: #2D4B65;
+}
+.icono-valor {
+    color: #2D4B65;
+}
+
+/* Estilos para las tarjetas de propuesta de valor */
+.card-valor {
+    border-left: 4px solid #2D4B65 !important;
+    border-top: 0;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+/* Estilo personalizado para la sección de información */
+.info-section {
+    background-color: #EAF4F9; /* Azul muy claro, derivado del color principal */
+    border-left: 4px solid #006495;
+    color: #333333;
+}
+.info-icon {
+    color: #006495;
+}
+
+/* Estilos para los títulos de Objetivo y Compromiso */
+.titulo-seccion {
+    color: #006495;
+    border-bottom: 2px solid #E5E5E5;
+}
+.icono-seccion {
+    color: #006495;
+}
