@@ -51,7 +51,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # elimina para prod
+    #'corsheaders.middleware.CorsMiddleware',  # elimina para prod
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -130,7 +130,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/webapp/static/'
+STATIC_URL = '/static/'
+
+# Directorio donde se recopilarán los archivos estáticos
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# Directorios adicionales donde buscar archivos estáticos
 STATICFILES_DIRS = [BASE_DIR / "webapp/static"]
 
 # Default primary key field type
