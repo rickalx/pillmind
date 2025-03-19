@@ -38,11 +38,13 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'pillmind.up.railway.app']
 
 CSRF_TRUSTED_ORIGINS = ['https://pillmind.up.railway.app']
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 SECURE_HSTS_SECONDS = 31536000  # 1 año en segundos
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Aplica HSTS a subdominios
 SECURE_HSTS_PRELOAD = True  # Permite que tu dominio sea incluido en la lista de precarga de HSTS
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Application definition
 
@@ -195,5 +197,5 @@ LOGIN_REDIRECT_URL = '/'  # Redirige al inicio después de iniciar sesión
 LOGOUT_REDIRECT_URL = '/'  # Redirige al inicio después de cerrar sesión
 LOGIN_URL = '/accounts/login/'  # Ruta para la vista de inicio de sesión
 
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
