@@ -137,10 +137,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'localtime',
-        },
         'file': {
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'logs' / 'errores.log',
@@ -149,18 +145,18 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console', 'file'],
+            'handlers': ['file'],
             'level': 'WARNING',
             'propagate': True,
         },
         'pillmind': {
-            'handlers': ['console', 'file'],
+            'handlers': ['file'],
             'level': 'INFO',
             'propagate': True,
         },
     },
     'root': {
-        'handlers': ['console', 'file'],
+        'handlers': ['file'],
         'level': 'INFO',
     },
 }
@@ -169,3 +165,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  # Ejemplo: frontend en React
     "http://127.0.0.1:8000",  # Permitir el dominio local
 ]
+
+LOGIN_REDIRECT_URL = '/'  # Redirige al inicio después de iniciar sesión
+LOGOUT_REDIRECT_URL = '/'  # Redirige al inicio después de cerrar sesión
+LOGIN_URL = '/accounts/login/'  # Ruta para la vista de inicio de sesión

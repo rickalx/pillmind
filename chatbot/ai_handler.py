@@ -29,15 +29,7 @@ def _get_prompt_from_database_sync():
             # Añadir formato de respuesta si existe
             if hasattr(default_prompt, 'formato_respuesta') and default_prompt.formato_respuesta:
                 full_prompt += f"\n\n[FORMATO DE RESPUESTA]\n{default_prompt.formato_respuesta}"
-            
-            # Agregar instrucciones para generar un JSON estructurado
-            full_prompt += """
-Proporciona la respuesta en formato JSON con los siguientes campos:
-- "titulo": Un título breve y descriptivo de la propuesta.
-- "palabras_clave": Una lista de palabras clave relevantes.
-- "contenido": El análisis completo, siguiendo el formato de respuesta especificado.
-"""
-            
+                        
             return full_prompt
         else:
             # En lugar de devolver un valor predeterminado, lanzamos excepción

@@ -14,6 +14,7 @@ from .views.prompt_views import (
 )
 from .views.rol_ia_views import RolIACreateView
 from .views.inicio_view import InicioView
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     # URL para la página de inicio
@@ -34,4 +35,5 @@ urlpatterns = [
     
     # URLs para roles de IA
     path('roles-ia/nuevo/', RolIACreateView.as_view(), name='rol_ia_add'),
+
 ]
